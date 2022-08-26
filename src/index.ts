@@ -3,19 +3,19 @@ export interface CsvParserOptions {
    * Defines the separator to use
    * @default ','
    */
-  separator: ',' | ';' | '\t'
+  separator?: ',' | ';' | '\t'
 
   /**
    * True if first line contains column headers, otherwise an array of strings containing the headers may be given
    * @default true
    */
-  header: true | string[]
+  header?: true | string[]
 
   /**
    * Defines the delimiter of strings
    * @default '"'
    */
-  stringDelimiter: '\'' | '"'
+  stringDelimiter?: '\'' | '"'
 }
 
 /**
@@ -27,7 +27,7 @@ export interface CsvParserOptions {
  */
 export default async function parseCSV<R extends Array<Record<any, string>>> (
   csv: string,
-  { separator = ',', header = true, stringDelimiter = '"' }: CsvParserOptions
+  { separator = ',', header = true, stringDelimiter = '"' }: CsvParserOptions = {}
 ): Promise<R> {
   return await new Promise<R>((resolve, reject) => {
     const lines = csv.split(/\r?\n/g)
