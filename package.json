@@ -1,0 +1,38 @@
+{
+  "name": "@interaktiv.de/csv-parser",
+  "version": "1.0.0",
+  "description": "Simple CSV parser for JavaScript.",
+  "keywords": [
+    "csv",
+    "csv-parser",
+    "parse",
+    "async"
+  ],
+  "homepage": "https://github.com/interaktivgmbh/csv-parser#readme",
+  "bugs": {
+    "url": "https://github.com/interaktivgmbh/csv-parser/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Interaktiv GmbH",
+    "email": "info@interaktiv.de",
+    "url": "https://interaktiv.de"
+  },
+  "contributors": [
+    {
+      "name": "Mike Kühnapfel",
+      "email": "kuehnapfel@interaktiv.de",
+      "url": "https://github.com/veyxos"
+    }
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interaktivgmbh/csv-parser.git"
+  },
+  "scripts": {
+    "postinstall": "tsc"
+  },
+  "private": false
+}
