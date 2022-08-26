@@ -34,5 +34,11 @@
   "scripts": {
     "postinstall": "tsc"
   },
-  "private": false
+  "private": false,
+  "dependencies": {
+    "typescript": "^4.8.2"
+  },
+  "devDependencies": {
+    "ts-standard": "^11.0.0"
+  }
 }
