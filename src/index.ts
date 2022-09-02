@@ -1,24 +1,4 @@
-export declare interface CsvParserOptions {
-  /**
-   * Defines the separator to use
-   * @default ','
-   */
-  separator?: ',' | ';' | '\t'
-
-  /**
-   * True if first line contains column headers, otherwise an array of strings containing the headers may be given
-   * @default true
-   */
-  header?: true | string[]
-
-  /**
-   * Defines the delimiter of strings
-   * @default '"'
-   */
-  stringDelimiter?: '\'' | '"'
-}
-
-export declare interface CsvCellMetadata {
+export interface CsvCellMetadata {
   readonly columnIndex: number
   readonly columnName: string
   readonly rowIndex: number
@@ -59,7 +39,24 @@ const csvCellMetadataFactory = (columnIndex: number, columnName: string, rowInde
   }
 }
 
+export interface CsvParserOptions {
+  /**
+   * True if first line contains column headers, otherwise an array of strings containing the headers may be given
+   * @default true
+   */
+  header?: true | string[]
 
+  /**
+   * Defines the separator to use
+   * @default ','
+   */
+  separator?: string
+
+  /**
+   * Defines the delimiter of strings
+   * @default '"'
+   */
+  stringDelimiter?: '\'' | '"'
 }
 
 /**
