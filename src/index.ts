@@ -134,3 +134,53 @@ export default async function parseCSV<R extends Array<Record<any, any>>> (
     )
   })
 }
+
+export async function toCsv (
+  data: Array<Record<string | number, any>>,
+  {
+    separator = ',',
+    stringDelimiter = '"'
+  }: Omit<CsvParserOptions, 'header'> = {}
+): Promise<string> {
+  return await new Promise<string>((resolve, reject) => {
+    if (data == null || data.length === 0) return reject(new SyntaxError('data not provided'))
+
+    const csv: string[][] = [Object.keys(data[0])]
+
+    for (let i = 0, rowData = data[i]; i < data.length; rowData = data[++i]) {
+      const row = Object.values(rowData)
+      csv.push([])
+
+      for (let q = 0, cell = row[q]; q < row.length; cell = row[++q]) {
+        if (cell === undefined || cell === null) {
+          csv[i + 1].push('')
+        } else if (typeof cell === 'function') {
+          csv[i + 1].push(`[function ${(cell as Function).name}]`)
+        } else if (cell instanceof Date) {
+          csv[i + 1].push(cell.toISOString())
+        } else if (typeof HTMLElement !== 'undefined' && cell instanceof HTMLElement) {
+          csv[i + 1].push(
+            cell.innerHTML != null
+              ? cell.outerHTML.slice(0, cell.outerHTML.indexOf(cell.innerHTML))
+              : cell.outerHTML
+          )
+        } else {
+          csv[i + 1].push(cell.toString())
+        }
+      }
+    }
+
+    resolve(
+      csv
+        .map(row => row.map(
+          cell => cell.includes('"')
+            ? `${stringDelimiter}${cell.replace(new RegExp(stringDelimiter, 'g'), `${stringDelimiter}${stringDelimiter}`)}${stringDelimiter}`
+            : cell.includes(' ') || cell.includes(separator)
+              ? `${stringDelimiter}${cell}${stringDelimiter}`
+              : cell
+        ).join(separator))
+        .join('\n')
+    )
+  })
+}
+
