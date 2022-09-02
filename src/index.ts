@@ -59,6 +59,8 @@ export interface CsvParserOptions {
   stringDelimiter?: '\'' | '"'
 }
 
+export type CsvParserCallbackFunction<T = any> = (str: string, metadata: CsvCellMetadata) => T
+
 /**
  * Simple CSV parse for JavaScript.
  * @param csv Input CSV data
@@ -71,7 +73,7 @@ export interface CsvParserOptions {
 export default async function parseCSV<R extends Array<Record<any, any>>> (
   csv: string,
   { separator = ',', header = true, stringDelimiter = '"' }: CsvParserOptions = {},
-  callbacks: Record<number|string, (str: string, metadata: CsvCellMetadata) => any> = {}
+  callbacks: Record<number | string, CsvParserCallbackFunction<T>> = {}
 ): Promise<R> {
   return await new Promise<R>((resolve, reject) => {
     const lines = csv.split(/\r?\n/g)
