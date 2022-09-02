@@ -62,7 +62,7 @@ export interface CsvParserOptions {
 export type CsvParserCallbackFunction<T = any> = (str: string, metadata: CsvCellMetadata) => T
 
 /**
- * Simple CSV parse for JavaScript.
+ * Parses CSV data to an array of objects.
  * @param csv Input CSV data
  * @param options Parsing options
  * @param callbacks Object of optional callback functions to further parse CSV data.
@@ -70,12 +70,12 @@ export type CsvParserCallbackFunction<T = any> = (str: string, metadata: CsvCell
  * @returns Promise of an array of objects resembling a line of CSV data
  * @async
  */
-export default async function parseCSV<R extends Array<Record<any, any>>> (
+export async function fromCsv<R extends Record<string, T>, T = any> (
   csv: string,
   { separator = ',', header = true, stringDelimiter = '"' }: CsvParserOptions = {},
   callbacks: Record<number | string, CsvParserCallbackFunction<T>> = {}
-): Promise<R> {
-  return await new Promise<R>((resolve, reject) => {
+): Promise<R[]> {
+  return await new Promise<R[]>((resolve, reject) => {
     const lines = csv.split(/\r?\n/g)
     const cells: string[][] = []
 
@@ -130,7 +130,7 @@ export default async function parseCSV<R extends Array<Record<any, any>>> (
               ? callbacks[colIdx](line[colIdx], csvCellMetadataFactory(colIdx + 1, colName, rowIdx + 1))
               : line[colIdx]
         ])
-      )) as R
+      )) as R[]
     )
   })
 }
@@ -184,3 +184,4 @@ export async function toCsv (
   })
 }
 
+export default fromCsv
