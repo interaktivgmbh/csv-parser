@@ -26,51 +26,40 @@ export declare interface CsvCellMetadata {
   readonly cellReferenceRC: string
 }
 
-class CsvCellMetadataClass implements CsvCellMetadata {
-  constructor (
-    readonly columnIndex: number,
-    readonly columnName: string,
-    readonly rowIndex: number
-  ) {}
+const characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-  get cellReferenceA1 (): string {
-    return `${CsvCellMetadataClass.#convertNumberToLetter(this.columnIndex)}${this.rowIndex}`
+const numberToCharacters = (num: number): string => {
+  if (num === 1) return 'A'
+
+  const out: number[] = []
+
+  num--
+
+  while (num > 0) {
+    out.unshift(num % 26)
+    num = Math.floor(num / 26)
   }
 
-  get cellReferenceRC (): string {
-    return `R${this.rowIndex}C${this.columnIndex}`
+  return out
+    .map((it, idx, { length }) => characters[
+      length > 1 && idx < length - 1
+        ? it - 1
+        : it
+    ])
+    .join('')
+}
+
+const csvCellMetadataFactory = (columnIndex: number, columnName: string, rowIndex: number): CsvCellMetadata => {
+  return {
+    columnIndex,
+    columnName,
+    rowIndex,
+    cellReferenceA1: `${numberToCharacters(columnIndex)}${rowIndex}`,
+    cellReferenceRC: `R${rowIndex}C${columnIndex}`
   }
+}
 
-  static #letterArray: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] = [
-    'A', 'B', 'C', 'D',
-    'E', 'F', 'G', 'H',
-    'I', 'J', 'K', 'L',
-    'M', 'N', 'O', 'P',
-    'Q', 'R', 'S', 'T',
-    'U', 'V', 'W', 'X',
-    'Y', 'Z'
-  ]
 
-  static #convertNumberToLetter (num: number): string {
-    if (num === 1) return 'A'
-
-    const out: number[] = []
-
-    num--
-
-    while (num > 0) {
-      out.unshift(num % 26)
-      num = Math.floor(num / 26)
-    }
-
-    return out
-      .map((it, idx, { length }) => CsvCellMetadataClass.#letterArray[
-        length > 1 && idx < length - 1
-          ? it - 1
-          : it
-      ])
-      .join('')
-  }
 }
 
 /**
@@ -137,9 +126,9 @@ export default async function parseCSV<R extends Array<Record<any, any>>> (
         headers.map((colName, colIdx) => [
           colName,
           colName in callbacks
-            ? callbacks[colName](line[colIdx], new CsvCellMetadataClass(colIdx + 1, colName, rowIdx + 1))
+            ? callbacks[colName](line[colIdx], csvCellMetadataFactory(colIdx + 1, colName, rowIdx + 1))
             : colIdx in callbacks
-              ? callbacks[colIdx](line[colIdx], new CsvCellMetadataClass(colIdx + 1, colName, rowIdx + 1))
+              ? callbacks[colIdx](line[colIdx], csvCellMetadataFactory(colIdx + 1, colName, rowIdx + 1))
               : line[colIdx]
         ])
       )) as R
