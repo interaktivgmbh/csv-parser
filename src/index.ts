@@ -135,6 +135,13 @@ export async function fromCsv<R extends Record<string, T>, T = any> (
   })
 }
 
+/**
+ * Parses an array of objects to CSV.
+ * @param data Input CSV data.
+ * @param param1 Parsing options.
+ * @returns Promise of the parsed CSV string
+ * @async
+ */
 export async function toCsv (
   data: Array<Record<string | number, any>>,
   {
